@@ -36,7 +36,7 @@ func (s *AlbumSearchScreen) Update(ev tcell.Event) {
 			album := *s.l.Selected()
 			if album != nil {
 				s.c.PushAlbum(album.AlbumID)
-				if !s.c.IsPaused() && len(s.c.Queue().Songs) == int(album.Songs) {
+				if !s.c.IsPaused() && len(s.c.Queue.Songs) == int(album.Songs) {
 					s.c.Play()
 				}
 			}

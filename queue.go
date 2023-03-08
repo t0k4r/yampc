@@ -24,7 +24,7 @@ func NewQueueScreen(s tcell.Screen, c *client.Client) QueueScreen {
 	}
 }
 func (q *QueueScreen) Tick() {
-	q.l.SetItems(maps(q.c.Queue().Songs, func(sng client.Song) *uiSong {
+	q.l.SetItems(maps(q.c.Queue.Songs, func(sng client.Song) *uiSong {
 		return &uiSong{sng}
 	}))
 	q.p.SetNow(int(q.c.Position().Seconds()))
@@ -57,12 +57,12 @@ func (q *QueueScreen) Update(ev tcell.Event) {
 			}
 		case tcell.KeyEnter:
 			idx := q.l.Index()
-			if len(q.c.Queue().Songs) > idx {
+			if len(q.c.Queue.Songs) > idx {
 				q.c.Index(uint(idx))
 			}
 		case tcell.KeyDelete:
 			idx := q.l.Index()
-			if len(q.c.Queue().Songs) > idx {
+			if len(q.c.Queue.Songs) > idx {
 				q.c.Delete(uint(idx))
 			}
 		default:
@@ -79,13 +79,13 @@ func (q *QueueScreen) Print() {
 	title := ""
 	pos := 0
 	dur := 0
-	if len(q.c.Queue().Songs) > int(q.c.Queue().Index) {
-		sng := q.c.Queue().Songs[q.c.Queue().Index]
+	if len(q.c.Queue.Songs) > int(q.c.Queue.Index) {
+		sng := q.c.Queue.Songs[q.c.Queue.Index]
 		pos = int(q.c.Position().Milliseconds())
 		dur = int(sng.Ms)
 		title = sng.Title
 	}
-	q.n.Print(q.c.IsPaused(), int(q.c.Queue().Index), len(q.c.Queue().Songs), title, pos, dur)
+	q.n.Print(q.c.IsPaused(), int(q.c.Queue.Index), len(q.c.Queue.Songs), title, pos, dur)
 }
 func (q *QueueScreen) Resize() {
 	w, h := q.s.Size()

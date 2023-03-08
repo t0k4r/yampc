@@ -41,8 +41,8 @@ type Queue struct {
 type Client struct {
 	addr  string
 	conn  *req.Client
-	now   *Now
-	queue *Queue
+	Now   *Now
+	Queue *Queue
 }
 
 type Query struct {
@@ -53,8 +53,8 @@ func New(addr string) *Client {
 	c := Client{
 		addr: addr,
 		conn: req.NewClient(),
-		now:  nil,
-		queue: &Queue{
+		Now:  nil,
+		Queue: &Queue{
 			Index: 0,
 			Songs: []Song{},
 		},
@@ -64,13 +64,13 @@ func New(addr string) *Client {
 }
 func (c *Client) update() {
 	for {
-		time.Sleep(time.Microsecond * 500)
+		time.Sleep(time.Millisecond * 500)
 		c.getNow()
 		c.getQueue()
 	}
 }
 func (c *Client) getNow() {
-	c.now = func() *Now {
+	c.Now = func() *Now {
 		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/ply/now", c.addr))
 		if err != nil {
 			log.Panic(err)
@@ -86,7 +86,7 @@ func (c *Client) getNow() {
 	}()
 }
 func (c *Client) getQueue() {
-	c.queue = func() *Queue {
+	c.Queue = func() *Queue {
 		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/ply/queue", c.addr))
 		if err != nil {
 			log.Panic(err)
@@ -104,33 +104,30 @@ func (c *Client) getQueue() {
 
 func (c *Client) Play() {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/play", c.addr))
-	c.getNow()
+
 }
 func (c *Client) Next() {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/next", c.addr))
-	c.getNow()
+
 }
 func (c *Client) Prev() {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/prev", c.addr))
-	c.getNow()
+
 }
 func (c *Client) Index(index uint) {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/index/%v", c.addr, index))
-	c.getNow()
+
 }
 func (c *Client) Delete(index uint) {
 	c.conn.R().Delete(fmt.Sprintf("http://%v/ply/index/%v", c.addr, index))
-	c.getNow()
+
 }
 func (c *Client) PushSong(id uint) {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/song/%v", c.addr, id))
-	c.getQueue()
 }
 func (c *Client) PushAlbum(id uint) {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/album/%v", c.addr, id))
-	c.getQueue()
 }
-
 func (c *Client) Seek(forward bool, time time.Duration) {
 	switch forward {
 	case true:
@@ -138,27 +135,22 @@ func (c *Client) Seek(forward bool, time time.Duration) {
 	case false:
 		c.conn.R().Post(fmt.Sprintf("http://%v/ply/pos/seek/back/%v", c.addr, time.Milliseconds()))
 	}
-	c.getNow()
 }
 func (c *Client) Duration() time.Duration {
-	c.getNow()
-	if c.now != nil {
-		return time.Duration(time.Millisecond * time.Duration(c.now.Dur))
+	if c.Now != nil {
+		return time.Duration(time.Millisecond * time.Duration(c.Now.Dur))
 	}
 	return time.Second * 0
 }
 func (c *Client) Position() time.Duration {
-	c.getNow()
-	c.getNow()
-	if c.now != nil {
-		return time.Duration(time.Millisecond * time.Duration(c.now.Pos))
+	if c.Now != nil {
+		return time.Duration(time.Millisecond * time.Duration(c.Now.Pos))
 	}
 	return time.Second * 0
 }
 func (c *Client) IsPaused() bool {
-	c.getNow()
-	if c.now != nil {
-		return c.now.Pause
+	if c.Now != nil {
+		return c.Now.Pause
 	} else {
 		return false
 	}
@@ -170,11 +162,8 @@ func (c *Client) SetPause(pause bool) {
 	case false:
 		c.conn.R().Post(fmt.Sprintf("http://%v/ply/unpause", c.addr))
 	}
-	c.getNow()
 }
-func (c *Client) Queue() Queue {
-	return *c.queue
-}
+
 func (c *Client) QuerySongByID(id uint) *Song {
 	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/lib/song/%v", c.addr, id))
 	if err != nil {

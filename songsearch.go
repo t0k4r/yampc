@@ -36,7 +36,7 @@ func (s *SongSearchScreen) Update(ev tcell.Event) {
 			song := *s.l.Selected()
 			if song != nil {
 				s.c.PushSong(song.SongID)
-				if !s.c.IsPaused() && len(s.c.Queue().Songs) == 1 {
+				if !s.c.IsPaused() && len(s.c.Queue.Songs) == 1 {
 					s.c.Play()
 				}
 			}
