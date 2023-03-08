@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -46,7 +45,7 @@ type Client struct {
 	queue *Queue
 }
 
-type query struct {
+type Query struct {
 	Like string `json:"like"`
 }
 
@@ -112,7 +111,7 @@ func (c *Client) Next() {
 	c.getNow()
 }
 func (c *Client) Prev() {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/next", c.addr))
+	c.conn.R().Post(fmt.Sprintf("http://%v/ply/prev", c.addr))
 	c.getNow()
 }
 func (c *Client) Index(index uint) {
@@ -192,16 +191,15 @@ func (c *Client) QuerySongByID(id uint) *Song {
 
 }
 func (c *Client) QuerySongByTitle(like string) []Song {
-	b, err := json.Marshal(query{like})
-	if err != nil {
-		log.Panic(err)
-	}
-	req, err := c.conn.R().SetBody(b).Post(fmt.Sprintf("http://%v/lib/song", c.addr))
+	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/lib/song", c.addr))
 	if err != nil {
 		log.Panic(err)
 	}
 	var songs []Song
-	req.UnmarshalJson(&songs)
+	err = req.UnmarshalJson(&songs)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return songs
 }
 func (c *Client) QuerySongByAlbumID(id uint) []Song {
@@ -228,11 +226,7 @@ func (c *Client) QueryAlbumByID(id uint) *Album {
 	}
 }
 func (c *Client) QueryAlbumByTitle(like string) []Album {
-	b, err := json.Marshal(query{like})
-	if err != nil {
-		log.Panic(err)
-	}
-	req, err := c.conn.R().SetBody(b).Post(fmt.Sprintf("http://%v/lib/album", c.addr))
+	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/lib/album", c.addr))
 	if err != nil {
 		log.Panic(err)
 	}
