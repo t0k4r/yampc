@@ -41,12 +41,14 @@ func (s *SongSearchScreen) Update(ev tcell.Event) {
 				}
 			}
 			s.i.Update(ev)
+		case tcell.KeyUp, tcell.KeyDown:
+			s.l.Update(ev)
+			s.Print()
 		default:
 			s.i.Update(ev)
 			s.l.SetItems(maps(s.c.QuerySongByTitle(s.i.Value()), func(alb client.Song) *uiSong {
 				return &uiSong{alb}
 			}))
-			s.l.Update(ev)
 			s.Print()
 		}
 

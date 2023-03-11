@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"yampc/client"
+	"yampc/ui"
 )
 
 type uiSong struct {
@@ -19,19 +20,7 @@ func (u *uiSong) Col(id int) string {
 	case 2:
 		t = u.Album
 	case 3:
-		secs := u.Ms / 1000
-		min := secs / 60
-		sec := secs % 60
-		if min < 10 {
-			t = fmt.Sprintf("0%v", min)
-		} else {
-			t = fmt.Sprintf("%v", min)
-		}
-		if sec < 10 {
-			t = fmt.Sprintf("%v:0%v", t, sec)
-		} else {
-			t = fmt.Sprintf("%v:%v", t, sec)
-		}
+		t = ui.Time(int(u.Ms))
 	}
 	return t
 }

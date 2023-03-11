@@ -5,23 +5,10 @@ import (
 	"strings"
 )
 
-//	func fgRGB(r, g, b int) string {
-//		return fmt.Sprintf("\x1b[38;2;%v;%v;%vm", r, g, b)
-//	}
-//
-//	func bgRGB(r, g, b int) string {
-//		return fmt.Sprintf("\x1b[48;2;%v;%v;%vm", r, g, b)
-//	}
-//
-//	func fgDefault() string {
-//		return "\x1b[1;39m"
-//	}
-//
-//	func bgDefault() string {
-//		return "\x1b[1;49m"
-//	}
-
 // "ESC[?25h <- cursor visible code"
+func hideCurs() string {
+	return "\x1B[?25l"
+}
 func showCursr() string {
 	return "\x1B[?25h"
 }
@@ -33,7 +20,6 @@ func padding(size int) string {
 	return strings.Repeat(" ", size)
 }
 
-// indexed from 1 WTF!?
 func setXY(x, y int) string {
 	return fmt.Sprintf("\x1B[%v;%vH", y, x)
 }
@@ -50,14 +36,14 @@ func clearLine() string {
 	return "\x1B[2K"
 }
 
-func cut(text string, size int) string {
+func cut(text []rune, size int) string {
 	if size > len(text) {
-		return text
+		return string(text)
 	}
-	return fmt.Sprintf("%v…", text[:size-1])
+	return fmt.Sprintf("%s… ", string(text[:size-2]))
 }
 
-func time(ms int) string {
+func Time(ms int) string {
 	t := ""
 	secs := ms / 1000
 	min := secs / 60

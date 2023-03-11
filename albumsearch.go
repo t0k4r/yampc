@@ -40,12 +40,14 @@ func (s *AlbumSearchScreen) Update(ev tcell.Event) {
 					s.c.Play()
 				}
 			}
+		case tcell.KeyUp, tcell.KeyDown:
+			s.l.Update(ev)
+			s.Print()
 		default:
 			s.i.Update(ev)
 			s.l.SetItems(maps(s.c.QueryAlbumByTitle(s.i.Value()), func(alb client.Album) *uiAlbum {
 				return &uiAlbum{alb}
 			}))
-			s.l.Update(ev)
 			s.Print()
 		}
 	case *tcell.EventResize:

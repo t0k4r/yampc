@@ -38,12 +38,6 @@ func (l *List[T]) Selected() *T {
 func (l *List[T]) Index() int {
 	return l.idx
 }
-func (l *List[T]) GetIndex(idx int) *T {
-	if len(l.items) > idx {
-		return &l.items[idx]
-	}
-	return nil
-}
 func (l *List[T]) Update(ev tcell.Event) {
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
@@ -82,15 +76,21 @@ func (l *List[T]) Print() {
 		}
 		endColW := len(disp[0].Col(endCol))
 		collW := (l.w - endColW) / (cols - 1)
+		endPad := l.w - (collW * (disp[0].Cols() - 1)) - endColW
+		endIdx := disp[0].Cols() - 1
 		lastI := 0
 		for i, item := range disp {
 			text := ""
 			for j := 0; j < cols; j++ {
+				coll := cut([]rune(item.Col(j)), collW)
+				if j == endIdx {
+					coll = fmt.Sprintf("%v%v", padding(endPad), coll)
+				}
 				if j == cols-1 {
-					text += fmt.Sprintf("%v%v", setXY(l.x+collW*(j), l.y+i), cut(item.Col(j), collW))
+					text += fmt.Sprintf("%v%v", setXY(l.x+collW*(j), l.y+i), coll)
 
 				} else {
-					text += fmt.Sprintf("%v%v%v", setXY(l.x+collW*(j), l.y+i), cut(item.Col(j), collW), padding(collW))
+					text += fmt.Sprintf("%v%v%v", setXY(l.x+collW*(j), l.y+i), coll, padding(collW))
 
 				}
 			}
@@ -111,9 +111,9 @@ func (l *List[T]) Print() {
 		}
 	}
 	if len(l.items) != 0 {
-		fmt.Printf(italic("%v%v%v/%v"), setXY(l.x, l.y+l.h-1), clearLine(), l.idx+1, len(l.items))
+		fmt.Printf(italic("%v%v%v%v/%v"), setXY(l.x, l.y+l.h-1), padding(l.w), setXY(l.x, l.y+l.h-1), l.idx+1, len(l.items))
 	} else {
-		fmt.Printf(italic("%v%v0/0"), setXY(l.x, l.y+l.h-1), clearLine())
+		fmt.Printf(italic("%v%v%v%v0/0"), setXY(l.x, l.y+l.h-1), padding(l.w), setXY(l.x, l.y+l.h-1), clearLine())
 	}
 }
 

@@ -64,9 +64,9 @@ func New(addr string) *Client {
 }
 func (c *Client) update() {
 	for {
-		time.Sleep(time.Millisecond * 500)
 		c.getNow()
 		c.getQueue()
+		time.Sleep(time.Millisecond * 500)
 	}
 }
 func (c *Client) getNow() {

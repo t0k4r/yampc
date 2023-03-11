@@ -31,7 +31,7 @@ func (p *Progress) Print() {
 		}
 	}
 }
-func (p *Progress) MaxMin() (int, int) {
+func (p *Progress) MaxNow() (int, int) {
 	return p.max, p.now
 }
 func (p *Progress) Resize(w int) {
