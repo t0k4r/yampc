@@ -113,7 +113,7 @@ func (l *List[T]) Print() {
 	if len(l.items) != 0 {
 		fmt.Printf(italic("%v%v%v%v/%v"), setXY(l.x, l.y+l.h-1), padding(l.w), setXY(l.x, l.y+l.h-1), l.idx+1, len(l.items))
 	} else {
-		fmt.Printf(italic("%v%v%v%v0/0"), setXY(l.x, l.y+l.h-1), padding(l.w), setXY(l.x, l.y+l.h-1), clearLine())
+		fmt.Printf(italic("%v%v%v0/0"), setXY(l.x, l.y+l.h-1), padding(l.w), setXY(l.x, l.y+l.h-1))
 	}
 }
 

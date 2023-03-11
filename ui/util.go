@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-// "ESC[?25h <- cursor visible code"
 func hideCurs() string {
 	return "\x1B[?25l"
 }
@@ -30,10 +29,6 @@ func italic(text string) string {
 
 func bold(text string) string {
 	return fmt.Sprintf("\x1B[1m%v\x1b[22m", text)
-}
-
-func clearLine() string {
-	return "\x1B[2K"
 }
 
 func cut(text []rune, size int) string {
