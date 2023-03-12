@@ -124,9 +124,11 @@ func (c *Client) Delete(index uint) {
 }
 func (c *Client) PushSong(id uint) {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/song/%v", c.addr, id))
+	c.getQueue()
 }
 func (c *Client) PushAlbum(id uint) {
 	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/album/%v", c.addr, id))
+	c.getQueue()
 }
 func (c *Client) Seek(forward bool, time time.Duration) {
 	switch forward {
