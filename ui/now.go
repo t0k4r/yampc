@@ -24,7 +24,7 @@ func (n *Now) Print(isPaused bool, idx, qLen int, title string, pos, dur int) {
 		idx++
 	}
 	txt = fmt.Sprintf("%v %v/%v ", txt, idx, qLen)
-	txt = fmt.Sprintf("%v%v", txt, cut([]rune(italic(title)), n.w-len(txt)))
+	txt = fmt.Sprintf("%v%v", txt, cut([]rune(italic(bold(title))), n.w-len(txt)))
 	txt = fmt.Sprintf("%v%v", txt, padding(n.w-len(txt)-11))
 	txt += fmt.Sprintf("%v%v/%v", setXY(n.x+n.w-11, n.y), Time(pos), Time(dur))
 	fmt.Print(txt)

@@ -34,7 +34,7 @@ func NewApp() App {
 	if err := s.Init(); err != nil {
 		log.Fatalf("%+v", err)
 	}
-	c := client.New("127.0.0.1:2137")
+	c := client.New(readConf().Addr)
 	return App{
 		ass:       NewAlbumSearchScreen(s, c),
 		sss:       NewSongSearchScreen(s, c),
