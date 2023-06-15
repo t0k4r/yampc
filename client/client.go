@@ -71,7 +71,7 @@ func (c *Client) update() {
 }
 func (c *Client) getNow() {
 	c.Now = func() *Now {
-		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/ply/now", c.addr))
+		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/v1/ply/now", c.addr))
 		if err != nil {
 			log.Panic(err)
 		}
@@ -87,7 +87,7 @@ func (c *Client) getNow() {
 }
 func (c *Client) getQueue() {
 	c.Queue = func() *Queue {
-		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/ply/queue", c.addr))
+		req, err := c.conn.R().Get(fmt.Sprintf("http://%v/v1/ply/queue", c.addr))
 		if err != nil {
 			log.Panic(err)
 		}
@@ -103,39 +103,39 @@ func (c *Client) getQueue() {
 }
 
 func (c *Client) Play() {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/play", c.addr))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/play", c.addr))
 
 }
 func (c *Client) Next() {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/next", c.addr))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/next", c.addr))
 
 }
 func (c *Client) Prev() {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/prev", c.addr))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/prev", c.addr))
 
 }
 func (c *Client) Index(index uint) {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/index/%v", c.addr, index))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/index/%v", c.addr, index))
 
 }
 func (c *Client) Delete(index uint) {
-	c.conn.R().Delete(fmt.Sprintf("http://%v/ply/index/%v", c.addr, index))
+	c.conn.R().Delete(fmt.Sprintf("http://%v/v1/ply/index/%v", c.addr, index))
 
 }
 func (c *Client) PushSong(id uint) {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/song/%v", c.addr, id))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/queue/song/%v", c.addr, id))
 	c.getQueue()
 }
 func (c *Client) PushAlbum(id uint) {
-	c.conn.R().Post(fmt.Sprintf("http://%v/ply/queue/album/%v", c.addr, id))
+	c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/queue/album/%v", c.addr, id))
 	c.getQueue()
 }
 func (c *Client) Seek(forward bool, time time.Duration) {
 	switch forward {
 	case true:
-		c.conn.R().Post(fmt.Sprintf("http://%v/ply/pos/seek/forw/%v", c.addr, time.Milliseconds()))
+		c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/pos/seek/forw/%v", c.addr, time.Milliseconds()))
 	case false:
-		c.conn.R().Post(fmt.Sprintf("http://%v/ply/pos/seek/back/%v", c.addr, time.Milliseconds()))
+		c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/pos/seek/back/%v", c.addr, time.Milliseconds()))
 	}
 }
 func (c *Client) Duration() time.Duration {
@@ -160,14 +160,14 @@ func (c *Client) IsPaused() bool {
 func (c *Client) SetPause(pause bool) {
 	switch pause {
 	case true:
-		c.conn.R().Post(fmt.Sprintf("http://%v/ply/pause", c.addr))
+		c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/pause", c.addr))
 	case false:
-		c.conn.R().Post(fmt.Sprintf("http://%v/ply/unpause", c.addr))
+		c.conn.R().Post(fmt.Sprintf("http://%v/v1/ply/unpause", c.addr))
 	}
 }
 
 func (c *Client) QuerySongByID(id uint) *Song {
-	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/lib/song/%v", c.addr, id))
+	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/v1/lib/song/%v", c.addr, id))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -182,7 +182,7 @@ func (c *Client) QuerySongByID(id uint) *Song {
 
 }
 func (c *Client) QuerySongByTitle(like string) []Song {
-	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/lib/song", c.addr))
+	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/v1/lib/song", c.addr))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -194,7 +194,7 @@ func (c *Client) QuerySongByTitle(like string) []Song {
 	return songs
 }
 func (c *Client) QuerySongByAlbumID(id uint) []Song {
-	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/lib/song/album/%v", c.addr, id))
+	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/v1/lib/song/album/%v", c.addr, id))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -203,7 +203,7 @@ func (c *Client) QuerySongByAlbumID(id uint) []Song {
 	return songs
 }
 func (c *Client) QueryAlbumByID(id uint) *Album {
-	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/lib/album/%v", c.addr, id))
+	req, err := c.conn.R().Get(fmt.Sprintf("http://%v/v1/lib/album/%v", c.addr, id))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -217,7 +217,7 @@ func (c *Client) QueryAlbumByID(id uint) *Album {
 	}
 }
 func (c *Client) QueryAlbumByTitle(like string) []Album {
-	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/lib/album", c.addr))
+	req, err := c.conn.R().SetBodyJsonMarshal(Query{like}).Post(fmt.Sprintf("http://%v/v1/lib/album", c.addr))
 	if err != nil {
 		log.Panic(err)
 	}
